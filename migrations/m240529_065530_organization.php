@@ -27,7 +27,7 @@ class m240529_065530_organization extends Migration
     public function safeDown()
     {
         echo "m240529_065530_organization cannot be reverted.\n";
-
+        $this->dropTable('organization');
         return false;
     }
 
