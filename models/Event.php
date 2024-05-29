@@ -34,6 +34,7 @@ class Event extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             [['date', 'organizationIds'], 'safe'],
+            ['organizationIds', 'each', 'rule' => ['integer']],
             [['name', 'description'], 'string', 'max' => 255],
         ];
     }

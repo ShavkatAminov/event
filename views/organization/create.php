@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
+/** @var array $data */
 /** @var app\models\Organization $model */
 
 $this->title = 'Create Organization';
@@ -15,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'data' => $data,
     ]) ?>
 
 </div>

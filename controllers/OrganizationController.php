@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Event;
 use app\models\Organization;
 use app\models\OrganizationSearch;
+use app\service\OrganizationService;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -15,6 +16,14 @@ use yii\filters\VerbFilter;
  */
 class OrganizationController extends Controller
 {
+    private $organizationService;
+
+    public function __construct($id, $module, OrganizationService $organizationService, $config = [])
+    {
+        $this->organizationService = $organizationService;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @inheritDoc
      */
@@ -72,7 +81,7 @@ class OrganizationController extends Controller
         $model = new Organization();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post()) && $this->organizationService->saveWithTransaction($model)) {
                 return $this->redirect(['view',
                     'id' => $model->id,
                 ]);
@@ -83,7 +92,7 @@ class OrganizationController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'data' => ArrayHelper::toArray(Event::findAll(), ['id', 'name']),
+            'data' => ArrayHelper::map(Event::find()->all(), 'id', 'name'),
         ]);
     }
 
@@ -98,12 +107,13 @@ class OrganizationController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post()) && $this->organizationService->saveWithTransaction($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'data' => ArrayHelper::map(Event::find()->all(), 'id', 'name'),
         ]);
     }
 

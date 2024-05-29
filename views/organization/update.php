@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
+/** @var array $data */
 /** @var app\models\Organization $model */
 
 $this->title = 'Update Organization: ' . $model->name;
@@ -16,6 +17,7 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'data' => $data,
     ]) ?>
 
 </div>
