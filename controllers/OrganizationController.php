@@ -2,8 +2,10 @@
 
 namespace app\controllers;
 
+use app\models\Event;
 use app\models\Organization;
 use app\models\OrganizationSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -71,7 +73,9 @@ class OrganizationController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view',
+                    'id' => $model->id,
+                ]);
             }
         } else {
             $model->loadDefaultValues();
@@ -79,6 +83,7 @@ class OrganizationController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'data' => ArrayHelper::toArray(Event::findAll(), ['id', 'name']),
         ]);
     }
 

@@ -4,15 +4,26 @@ namespace app\controllers;
 
 use app\models\Event;
 use app\models\EventSearch;
+use app\models\Organization;
+use app\service\EventService;
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * EventController implements the CRUD actions for Event model.
  */
 class EventController extends Controller
 {
+
+    private $eventService;
+    public function __construct($id, $module, EventService $eventService, $config = [])
+    {
+        $this->eventService = $eventService;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @inheritDoc
      */
@@ -70,7 +81,7 @@ class EventController extends Controller
         $model = new Event();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post()) && $this->eventService->saveWithTransaction($model)) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -79,6 +90,7 @@ class EventController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'data' => ArrayHelper::map(Organization::find()->all(), 'id','name'),
         ]);
     }
 
@@ -93,12 +105,13 @@ class EventController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())  && $this->eventService->saveWithTransaction($model)) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'data' => ArrayHelper::map(Organization::find()->all(), 'id','name'),
         ]);
     }
 
